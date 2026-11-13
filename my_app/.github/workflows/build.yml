@@ -1,0 +1,27 @@
+name: "FAP: Build"
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build with ufbt
+        uses: flipperdevices/flipperzero-ufbt-action@v0.1
+        id: build-app
+        with:
+          sdk-channel: release   # Стабильная версия SDK
+          app-dir: ./my_app      # Папка с application.fam
+
+      - name: Upload FAP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.event.repository.name }}-fap
+          path: ${{ steps.build-app.outputs.fap-artifacts }}
